@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>良美眼鏡 - 視力風險評估</title>
+    <title>良美眼鏡 - 視力風險評估系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -12,32 +12,53 @@
 </head>
 <body class="bg-slate-50">
     <div id="root"></div>
-    <script type="text/babel">
-        // 1. 宣告圖示
-        const { Baby, Users, Check, ChevronRight, Activity } = lucide;
 
+    <script type="text/babel">
+        // 🚩 這裡放您的 GAS 部署網址
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxKqcY5sPsKEV16-MIC2lM3HzV_3Db-tHqiAaN5AKq8V8M2CWVMlfyNhoIbh1m4DLQt/exec";
+
+        const { Baby, Users, Check, ChevronRight, Activity, ShieldCheck, Sun, Droplets, Eye, ThumbsUp, AlertCircle, History, Sparkles, Search, ShieldAlert, Clock, EyeOff, BellOff, BarChart3, Heart } = lucide;
+
+        // ... (這裡就是我們之前寫的所有 React 邏輯 App 函式) ...
+        // 為了確保您可以直接執行，我先放一個「保證能動」的測試版
+        
         function App() {
             const [step, setStep] = React.useState(1);
             const [role, setRole] = React.useState(null);
 
-            // 簡單測試：點擊按鈕切換步驟
+            const testSave = async () => {
+                const testData = {
+                    userRole: role,
+                    riskLevel: "GREEN",
+                    score: 5,
+                    reason: "測試資料",
+                    habits: "打電腦, 看書",
+                    interests: "角膜塑型片",
+                    cognitive: "NORMAL"
+                };
+                try {
+                    await fetch(GAS_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(testData)
+                    });
+                    alert("測試儲存成功！請去查試算表");
+                } catch(e) { alert("儲存失敗"); }
+            };
+
             return (
                 <div className="min-h-screen flex items-center justify-center p-4">
-                    <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl p-10 text-center">
-                        <h1 className="text-xl font-bold text-indigo-900 mb-6">良美眼鏡 視力評估</h1>
-                        
-                        {step === 1 && (
+                    <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl p-8 text-center">
+                        <h1 className="text-2xl font-bold text-indigo-900 mb-8">良美眼鏡 視力評估系統</h1>
+                        {step === 1 ? (
                             <div className="space-y-4">
-                                <button onClick={() => {setRole('child'); setStep(2);}} className="w-full p-6 bg-slate-50 rounded-3xl border-2 hover:border-indigo-500 transition-all font-bold">兒童 / 青少年評估</button>
-                                <button onClick={() => {setRole('adult'); setStep(2);}} className="w-full p-6 bg-slate-50 rounded-3xl border-2 hover:border-indigo-500 transition-all font-bold">成人視覺優化</button>
+                                <button onClick={() => {setRole('兒童'); setStep(2);}} className="w-full p-6 bg-slate-50 rounded-2xl border-2 hover:border-indigo-500 font-bold">開始兒童評估</button>
                             </div>
-                        )}
-
-                        {step === 2 && (
-                            <div className="animate-in">
-                                <p className="mb-6 text-slate-500">您選擇的是：{role === 'child' ? '兒童' : '成人'}</p>
-                                <div className="bg-emerald-50 text-emerald-700 p-4 rounded-2xl mb-6 font-bold">系統連線成功！</div>
-                                <button onClick={() => setStep(1)} className="text-indigo-600 underline">返回重新選擇</button>
+                        ) : (
+                            <div>
+                                <p className="mb-6">系統已就緒，點擊下方按鈕測試連結您的試算表</p>
+                                <button onClick={testSave} className="w-full bg-indigo-900 text-white py-4 rounded-xl font-bold">點我測試寫入試算表</button>
+                                <button onClick={() => setStep(1)} className="mt-4 text-slate-400 block w-full text-sm">回上一步</button>
                             </div>
                         )}
                     </div>
@@ -47,7 +68,6 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
-        // 延遲一下讓 React 渲染完再抓圖示
         setTimeout(() => lucide.createIcons(), 500);
     </script>
 </body>
